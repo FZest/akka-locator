@@ -11,7 +11,8 @@ trait Service extends Actor with ActorLogging {
   override def preStart(): Unit = {
     super.preStart()
     ServiceLocator.discovery.registerService(instance)
-    ServiceLocator.locals += instance.getId -> self
+    ServiceLocator.locals.put(instance.getName, self)
+    ServiceLocator.instances.put(instance.getName, instance)
     log.info(s"service registered ${instance.getName} - ${instance.getId} - ${new String(instance.getPayload.url)}")
   }
 
@@ -19,7 +20,8 @@ trait Service extends Actor with ActorLogging {
     super.postStop()
     monitor ! PoisonPill
     ServiceLocator.discovery.unregisterService(instance)
-    ServiceLocator.locals -= instance.getName
+    ServiceLocator.locals.remove(instance.getName)
+    ServiceLocator.instances.remove(instance.getName)
     log.info(s"service quited: ${new String(instance.getPayload.url)}")
   }
 
@@ -27,6 +29,7 @@ trait Service extends Actor with ActorLogging {
     if (instance.getPayload.load != load || instance.getPayload.status != status) {
       instance = ServiceLocator.createServiceInstance(self, context.system, load, status)
       ServiceLocator.discovery.updateService(instance)
+      ServiceLocator.instances.put(instance.getName, instance)
       log.info(s"overload $load status $status")
     }
   }
