@@ -2,7 +2,7 @@ import CommonDependency.dependencies
 
 organization in ThisBuild := "io.github.junheng.akka"
 
-lazy val root = (project in file("."))
+lazy val `akka-locator` = (project in file("."))
   .settings(
     name := "akka-locator",
     version := "0.14-SNAPSHOT",
@@ -11,6 +11,6 @@ lazy val root = (project in file("."))
     libraryDependencies ++= dependencies.akka,
     libraryDependencies ++= dependencies.curator,
     libraryDependencies ++= Seq(
-      "io.github.junheng.akka" %% "akka-monitor" % "0.1-SNAPSHOT" withSources()
+      "io.github.junheng.akka" %% "akka-monitor" % "0.2-SNAPSHOT" withSources()
     )
   )
